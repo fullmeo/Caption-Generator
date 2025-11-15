@@ -1,0 +1,40 @@
+.app-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.upload-zone {
+  border: 2px dashed #cbd5e0;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.upload-zone:hover {
+  border-color: #667eea;
+  background-color: rgba(102, 126, 234, 0.05);
+}
+
+.upload-zone.drag-active {
+  border-color: #667eea;
+  background-color: rgba(102, 126, 234, 0.1);
+}
+
+.caption-box {
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
