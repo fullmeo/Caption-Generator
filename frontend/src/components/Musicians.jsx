@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
-import { Users, Music2, Guitar, Radio } from 'lucide-react';
+import { useEffect, useState, memo } from 'react';
+import { Users, Music2, Music, Radio } from 'lucide-react';
 import { getMusicians } from '../services/api';
+import { toastError } from '../utils/toast';
 
 // Icônes par instrument
 const instrumentIcons = {
   'Saxophone': <Music2 className="w-6 h-6" />,
   'Trumpet': <Radio className="w-6 h-6" />,
   'Piano': <Music2 className="w-6 h-6" />,
-  'Bass': <Guitar className="w-6 h-6" />,
+  'Bass': <Music className="w-6 h-6" />,
   'Drums': <Radio className="w-6 h-6" />,
 };
 
@@ -28,7 +29,9 @@ function Musicians() {
       setMusicians(data.musicians || []);
       setError(null);
     } catch (err) {
-      setError(err.message);
+      const errorMessage = err.message || 'Erreur lors du chargement des musiciens';
+      setError(errorMessage);
+      toastError(errorMessage);
       console.error('Error fetching musicians:', err);
     } finally {
       setLoading(false);
@@ -124,4 +127,4 @@ function Musicians() {
   );
 }
 
-export default Musicians;
+export default memo(Musicians);

@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { BarChart3, TrendingUp, Music, MapPin, Hash, FileText } from 'lucide-react';
 import { getAnalytics } from '../services/api';
+import { toastError, toastSuccess } from '../utils/toast';
 
 function Dashboard() {
   const [analytics, setAnalytics] = useState(null);
@@ -17,8 +18,11 @@ function Dashboard() {
       const data = await getAnalytics();
       setAnalytics(data);
       setError(null);
+      toastSuccess('Statistiques mises à jour!');
     } catch (err) {
-      setError(err.message);
+      const errorMessage = err.message || 'Erreur lors du chargement des statistiques';
+      setError(errorMessage);
+      toastError(errorMessage);
       console.error('Error fetching analytics:', err);
     } finally {
       setLoading(false);
@@ -143,7 +147,7 @@ function Dashboard() {
   );
 }
 
-function StatCard({ icon, title, value, color }) {
+const StatCard = memo(({ icon, title, value, color }) => {
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 flex items-start space-x-4">
       <div className={`${color} text-white p-3 rounded-lg`}>
@@ -155,6 +159,8 @@ function StatCard({ icon, title, value, color }) {
       </div>
     </div>
   );
-}
+});
 
-export default Dashboard;
+StatCard.displayName = 'StatCard';
+
+export default memo(Dashboard);

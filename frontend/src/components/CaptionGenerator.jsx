@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { Upload, Instagram, Loader, Sparkles, Copy, Check, Brain } from 'lucide-react';
 import { analyzeMedia, generateCaption, analyzeAndGenerate } from '../services/api';
+import { API_BASE_URL, FILE_UPLOAD } from '../utils/constants';
+import { toastSuccess, toastError, copyToClipboard as copyToClipboardUtil } from '../utils/toast';
 import AdvancedAIOptions from './AdvancedAIOptions';
 
 function CaptionGenerator() {
@@ -30,6 +32,18 @@ function CaptionGenerator() {
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     if (file) {
+      // Validate file size
+      if (file.size > FILE_UPLOAD.MAX_SIZE) {
+        toastError(`Le fichier est trop volumineux (max ${FILE_UPLOAD.MAX_SIZE / 1024 / 1024}MB)`);
+        return;
+      }
+
+      // Validate file type
+      if (!FILE_UPLOAD.ACCEPTED_TYPES.includes(file.type)) {
+        toastError('Type de fichier non supporté');
+        return;
+      }
+
       setSelectedFile(file);
       setAnalysis(null);
       setCaption('');
@@ -61,7 +75,7 @@ function CaptionGenerator() {
           save_to_db: 'false'
         });
 
-        const response = await fetch(`http://localhost:8000/ai/analyze-and-generate-pro?${queryParams}`, {
+        const response = await fetch(`${API_BASE_URL}/ai/analyze-and-generate-pro?${queryParams}`, {
           method: 'POST',
           body: formDataObj
         });
@@ -71,15 +85,17 @@ function CaptionGenerator() {
         const result = await response.json();
         setAnalysis(result.analysis);
         setCaption(result.caption);
+        toastSuccess('Caption générée avec succès!');
       } else {
         // Use standard endpoint
         const result = await analyzeAndGenerate(selectedFile);
         setAnalysis(result.analysis);
         setCaption(result.caption);
+        toastSuccess('Caption générée avec succès!');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Erreur lors de la génération automatique');
+      toastError(error.message || 'Erreur lors de la génération automatique');
     } finally {
       setLoading(false);
     }
@@ -103,18 +119,21 @@ function CaptionGenerator() {
       });
 
       setCaption(captionResult.caption);
+      toastSuccess('Caption personnalisée générée avec succès!');
     } catch (error) {
       console.error('Error:', error);
-      alert('Erreur lors de la génération personnalisée');
+      toastError(error.message || 'Erreur lors de la génération personnalisée');
     } finally {
       setLoading(false);
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(caption);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopyToClipboard = async () => {
+    const success = await copyToClipboardUtil(caption);
+    if (success) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   return (
@@ -335,7 +354,7 @@ function CaptionGenerator() {
               </h3>
               {caption && (
                 <button
-                  onClick={copyToClipboard}
+                  onClick={handleCopyToClipboard}
                   className="flex items-center gap-2 px-3 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition"
                 >
                   {copied ? (
@@ -375,4 +394,4 @@ function CaptionGenerator() {
   );
 }
 
-export default CaptionGenerator;
+export default memo(CaptionGenerator);

@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo, useCallback } from 'react';
 import { Brain, Languages, Palette, Sparkles, Zap, GitCompare } from 'lucide-react';
+import { API_BASE_URL } from '../utils/constants';
+import { toastError } from '../utils/toast';
 
 function AdvancedAIOptions({ onOptionsChange }) {
   const [options, setOptions] = useState({
@@ -14,10 +16,16 @@ function AdvancedAIOptions({ onOptionsChange }) {
 
   useEffect(() => {
     // Fetch available options from API
-    fetch('http://localhost:8000/ai/available-options')
-      .then(res => res.json())
+    fetch(`${API_BASE_URL}/ai/available-options`)
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to load AI options');
+        return res.json();
+      })
       .then(data => setAvailableOptions(data))
-      .catch(err => console.error('Error loading AI options:', err));
+      .catch(err => {
+        console.error('Error loading AI options:', err);
+        toastError('Erreur lors du chargement des options IA');
+      });
   }, []);
 
   useEffect(() => {
@@ -27,9 +35,9 @@ function AdvancedAIOptions({ onOptionsChange }) {
     }
   }, [options, onOptionsChange]);
 
-  const handleChange = (key, value) => {
+  const handleChange = useCallback((key, value) => {
     setOptions(prev => ({ ...prev, [key]: value }));
-  };
+  }, []);
 
   if (!availableOptions) {
     return (
@@ -267,4 +275,4 @@ function AdvancedAIOptions({ onOptionsChange }) {
   );
 }
 
-export default AdvancedAIOptions;
+export default memo(AdvancedAIOptions);

@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { MapPin, Building2, Theater, Home } from 'lucide-react';
 import { getVenues } from '../services/api';
+import { toastError } from '../utils/toast';
 
 // Icônes par type de lieu
 const venueTypeIcons = {
@@ -36,7 +37,9 @@ function Venues() {
       setVenues(data.venues || []);
       setError(null);
     } catch (err) {
-      setError(err.message);
+      const errorMessage = err.message || 'Erreur lors du chargement des lieux';
+      setError(errorMessage);
+      toastError(errorMessage);
       console.error('Error fetching venues:', err);
     } finally {
       setLoading(false);
@@ -173,4 +176,4 @@ function Venues() {
   );
 }
 
-export default Venues;
+export default memo(Venues);
