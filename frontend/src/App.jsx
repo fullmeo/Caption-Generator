@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Music, Sparkles, Users, MapPin, BarChart3 } from 'lucide-react';
+import { Music, Sparkles, Users, MapPin, BarChart3, FileText, Folder } from 'lucide-react';
 import CaptionGenerator from './components/CaptionGenerator';
 import Dashboard from './components/Dashboard';
 import Musicians from './components/Musicians';
 import Venues from './components/Venues';
+import Templates from './components/Templates';
+import BatchProcessor from './components/BatchProcessor';
 import './App.css';
 
 function App() {
@@ -11,6 +13,8 @@ function App() {
 
   const tabs = [
     { id: 'generator', name: 'Générateur', icon: Sparkles, component: CaptionGenerator },
+    { id: 'batch', name: 'Batch', icon: Folder, component: BatchProcessor },
+    { id: 'templates', name: 'Templates', icon: FileText, component: Templates },
     { id: 'dashboard', name: 'Dashboard', icon: BarChart3, component: Dashboard },
     { id: 'musicians', name: 'Musiciens', icon: Users, component: Musicians },
     { id: 'venues', name: 'Lieux', icon: MapPin, component: Venues },

@@ -92,3 +92,77 @@ export const getApiStatus = async () => {
 
   return response.json();
 };
+
+// Templates API
+export const getTemplates = async (params = {}) => {
+  const queryParams = new URLSearchParams(params).toString();
+  const response = await fetch(`${API_BASE_URL}/templates?${queryParams}`);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch templates');
+  }
+
+  return response.json();
+};
+
+export const getTemplate = async (templateId) => {
+  const response = await fetch(`${API_BASE_URL}/templates/${templateId}`);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch template');
+  }
+
+  return response.json();
+};
+
+export const createTemplate = async (templateData) => {
+  const response = await fetch(`${API_BASE_URL}/templates`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(templateData)
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to create template');
+  }
+
+  return response.json();
+};
+
+export const renderTemplate = async (templateId, variables) => {
+  const response = await fetch(`${API_BASE_URL}/templates/${templateId}/render`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(variables)
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to render template');
+  }
+
+  return response.json();
+};
+
+export const getTemplateSuggestions = async (analysis) => {
+  const response = await fetch(`${API_BASE_URL}/templates/suggest`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(analysis)
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to get template suggestions');
+  }
+
+  return response.json();
+};
+
+export const getTemplatePerformance = async (templateId) => {
+  const response = await fetch(`${API_BASE_URL}/templates/${templateId}/performance`);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch template performance');
+  }
+
+  return response.json();
+};
