@@ -1,0 +1,30 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="256" fill="#9333ea"/>
+
+  <!-- Music Note Icon -->
+  <g transform="translate(256, 256)">
+    <!-- Note stem -->
+    <rect x="40" y="-120" width="20" height="180" fill="white" rx="10"/>
+
+    <!-- Note head (bottom) -->
+    <ellipse cx="50" cy="70" rx="35" ry="25" fill="white" transform="rotate(-20 50 70)"/>
+
+    <!-- Note flag -->
+    <path d="M 60 -120 Q 120 -100, 120 -40 Q 120 10, 60 0" fill="white"/>
+
+    <!-- Instagram-style gradient accent -->
+    <circle cx="-70" cy="-50" r="45" fill="white" opacity="0.9"/>
+    <circle cx="-70" cy="-50" r="25" fill="#9333ea"/>
+
+    <!-- Sparkle/AI accent -->
+    <g transform="translate(-70, 50)">
+      <polygon points="0,-20 5,-5 20,0 5,5 0,20 -5,5 -20,0 -5,-5" fill="white" opacity="0.8"/>
+    </g>
+
+    <!-- Second sparkle -->
+    <g transform="translate(80, -70)">
+      <polygon points="0,-15 4,-4 15,0 4,4 0,15 -4,4 -15,0 -4,-4" fill="white" opacity="0.7"/>
+    </g>
+  </g>
+</svg>

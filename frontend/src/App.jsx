@@ -1,12 +1,26 @@
-import { useState } from 'react';
-import { Music, Sparkles, Users, MapPin, BarChart3, FileText, Folder } from 'lucide-react';
-import CaptionGenerator from './components/CaptionGenerator';
-import Dashboard from './components/Dashboard';
-import Musicians from './components/Musicians';
-import Venues from './components/Venues';
-import Templates from './components/Templates';
-import BatchProcessor from './components/BatchProcessor';
+import { useState, Suspense, lazy } from 'react';
+import { Music, Sparkles, Users, MapPin, BarChart3, FileText, Folder, Loader2 } from 'lucide-react';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
+import PWAUpdatePrompt from './components/PWAUpdatePrompt';
 import './App.css';
+
+// Lazy load heavy components
+const CaptionGenerator = lazy(() => import('./components/CaptionGenerator'));
+const Dashboard = lazy(() => import('./components/Dashboard'));
+const Musicians = lazy(() => import('./components/Musicians'));
+const Venues = lazy(() => import('./components/Venues'));
+const Templates = lazy(() => import('./components/Templates'));
+const BatchProcessor = lazy(() => import('./components/BatchProcessor'));
+
+// Loading component
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-[400px]">
+    <div className="flex flex-col items-center">
+      <Loader2 className="w-12 h-12 text-purple-600 animate-spin" />
+      <p className="mt-4 text-gray-600 font-medium">Chargement...</p>
+    </div>
+  </div>
+);
 
 function App() {
   const [activeTab, setActiveTab] = useState('generator');
@@ -70,7 +84,9 @@ function App() {
       {/* Main content */}
       <main className="container mx-auto px-4 py-8">
         <div className="animate-fadeIn">
-          {ActiveComponent && <ActiveComponent />}
+          <Suspense fallback={<LoadingSpinner />}>
+            {ActiveComponent && <ActiveComponent />}
+          </Suspense>
         </div>
       </main>
 
@@ -98,6 +114,10 @@ function App() {
           </div>
         </div>
       </footer>
+
+      {/* PWA Components */}
+      <PWAInstallPrompt />
+      <PWAUpdatePrompt />
     </div>
   );
 }
