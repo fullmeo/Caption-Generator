@@ -1,5 +1,7 @@
 import { useState, Suspense, lazy } from 'react';
 import { Music, Sparkles, Users, MapPin, BarChart3, Loader2 } from 'lucide-react';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
+import PWAUpdatePrompt from './components/PWAUpdatePrompt';
 import './App.css';
 
 // Lazy load heavy components
@@ -108,6 +110,10 @@ function App() {
           </div>
         </div>
       </footer>
+
+      {/* PWA Components */}
+      <PWAInstallPrompt />
+      <PWAUpdatePrompt />
     </div>
   );
 }
