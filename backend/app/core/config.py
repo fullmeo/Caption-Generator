@@ -18,6 +18,9 @@ class Settings:
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
     OPENAI_MODEL: str = "gpt-4-vision-preview"
 
+    # Anthropic Claude
+    ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
+
     # Database
     DATABASE_URL: str = os.getenv(
         "DATABASE_URL",

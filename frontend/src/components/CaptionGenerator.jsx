@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Upload, Instagram, Loader, Sparkles, Copy, Check } from 'lucide-react';
+import { Upload, Instagram, Loader, Sparkles, Copy, Check, Brain } from 'lucide-react';
 import { analyzeMedia, generateCaption, analyzeAndGenerate } from '../services/api';
+import AdvancedAIOptions from './AdvancedAIOptions';
 
 function CaptionGenerator() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -9,12 +10,21 @@ function CaptionGenerator() {
   const [caption, setCaption] = useState('');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [useAdvancedAI, setUseAdvancedAI] = useState(false);
 
   // Formulaire pour génération personnalisée
   const [formData, setFormData] = useState({
     musicians: '',
     venue: '',
     style: 'jazz'
+  });
+
+  // Options IA avancées
+  const [aiOptions, setAIOptions] = useState({
+    analysisModel: 'gpt-4-vision-preview',
+    captionModel: 'gpt-4',
+    style: 'casual',
+    language: 'fr'
   });
 
   const handleFileSelect = (event) => {
@@ -38,10 +48,35 @@ function CaptionGenerator() {
 
     setLoading(true);
     try {
-      // Utilise l'endpoint combiné pour une génération rapide
-      const result = await analyzeAndGenerate(selectedFile);
-      setAnalysis(result.analysis);
-      setCaption(result.caption);
+      if (useAdvancedAI) {
+        // Use advanced AI endpoint with selected models
+        const formDataObj = new FormData();
+        formDataObj.append('file', selectedFile);
+
+        const queryParams = new URLSearchParams({
+          analysis_model: aiOptions.analysisModel,
+          caption_model: aiOptions.captionModel,
+          style: aiOptions.style,
+          language: aiOptions.language,
+          save_to_db: 'false'
+        });
+
+        const response = await fetch(`http://localhost:8000/ai/analyze-and-generate-pro?${queryParams}`, {
+          method: 'POST',
+          body: formDataObj
+        });
+
+        if (!response.ok) throw new Error('Failed to generate with advanced AI');
+
+        const result = await response.json();
+        setAnalysis(result.analysis);
+        setCaption(result.caption);
+      } else {
+        // Use standard endpoint
+        const result = await analyzeAndGenerate(selectedFile);
+        setAnalysis(result.analysis);
+        setCaption(result.caption);
+      }
     } catch (error) {
       console.error('Error:', error);
       alert('Erreur lors de la génération automatique');
@@ -90,6 +125,34 @@ function CaptionGenerator() {
           Uploadez votre média et générez automatiquement une légende Instagram optimisée
         </p>
       </div>
+
+      {/* Advanced AI Toggle */}
+      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg p-4 flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <Brain className="w-6 h-6" />
+          <div>
+            <div className="font-bold">IA Avancée (Multi-Modèles)</div>
+            <div className="text-sm opacity-90">
+              GPT-4 Vision, Claude 3.5 Sonnet, styles personnalisés, 5 langues
+            </div>
+          </div>
+        </div>
+        <button
+          onClick={() => setUseAdvancedAI(!useAdvancedAI)}
+          className={`px-6 py-2 rounded-full font-semibold transition ${
+            useAdvancedAI
+              ? 'bg-white text-purple-600'
+              : 'bg-purple-700 text-white hover:bg-purple-800'
+          }`}
+        >
+          {useAdvancedAI ? 'Activé ✓' : 'Activer'}
+        </button>
+      </div>
+
+      {/* Advanced AI Options */}
+      {useAdvancedAI && (
+        <AdvancedAIOptions onOptionsChange={setAIOptions} />
+      )}
 
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Panneau de gauche - Upload et configuration */}

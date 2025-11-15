@@ -15,6 +15,7 @@ from app.core.security import verify_password, create_access_token, get_password
 from app.models import models, User, Musician, Venue, Caption
 from app.schemas import schemas
 from app.services.openai_service import openai_service
+from app.api.routes import ai_routes
 
 # Create tables (in production, use Alembic migrations)
 models.Base.metadata.create_all(bind=engine)
@@ -33,6 +34,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include AI advanced routes
+app.include_router(ai_routes.router)
 
 # OAuth2
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
