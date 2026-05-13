@@ -1,0 +1,8 @@
+# Netlify Redirects for SPA
+# This file handles client-side routing for React/Vite
+
+# API proxy (if backend hosted separately)
+# /api/*  https://your-backend-api.com/:splat  200
+
+# SPA fallback - serve index.html for all routes
+/*    /index.html   200
